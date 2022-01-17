@@ -20,22 +20,19 @@ getStreams().then(streams => {
 function getStreams() {
   const url = baseUrl + '/networks?inline=streams';
 
-  return new Promise(function(resolve, reject) {
-    axios.get(url).then(resp => {
-      let streams = [];
-      const networks = resp.data.data;
-      for (const network of networks) {
-        let networkStreams = network.streams.map(stream => {
-          return {  networkID: network.id,
-                    id: stream.id,
-                    programGuideLocationKey: stream.programGuideLocationKey }
-        })
-        streams.push(networkStreams);
-      }
-      streams = streams.flat();
-      resolve(streams);
-    })
-    .catch(e => reject(e))
+  return axios.get(url).then(resp => {
+    let streams = [];
+    const networks = resp.data.data;
+    for (const network of networks) {
+      let networkStreams = network.streams.map(stream => {
+        return {  networkID: network.id,
+                  id: stream.id,
+                  programGuideLocationKey: stream.programGuideLocationKey }
+      })
+      streams.push(networkStreams);
+    }
+    streams = streams.flat();
+    return streams;
   })
 }
 
@@ -43,15 +40,11 @@ function getStreams() {
 // fetches program queue data for stream
 // returns an object with the stream id and an array of all the show IDs played on that stream (ShowsForStream)
 function getShowsForStream(stream) {
-  const url = baseUrl + `program-queue/${stream.networkID}/${stream.programGuideLocationKey}/day/${dateString()}/15`
-  return new Promise(function(resolve, reject) {
-    axios.get(url)
-    .then(resp => {
-      const shows = resp.data.data.map(show => show.showID)
-      const result = { id: stream.id, shows: shows }
-      resolve(result);
-    })
-    .catch(e => reject(e))
+  const url = baseUrl + `program-queue/${stream.networkID}/${stream.programGuideLocationKey}/day/${formatDateToYYYYMMDD()}/15`
+
+  return axios.get(url).then(resp => {
+      const shows = resp.data.data.map(show => show.showID);
+      return { id: stream.id, shows: shows }
   })
 }
 
@@ -71,7 +64,7 @@ function collate(streamShowData) {
   return formatted;
 }
 
-function dateString() {
+function formatDateToYYYYMMDD() {
   const date = new Date();
   const d = date.getDate();
   const m = date.getMonth() + 1;
