@@ -1,0 +1,14 @@
+{
+  "name": "showstreamcollator",
+  "version": "1.0.0",
+  "description": "produces json file mapping showIDs to the streams thatair them for Listen apps reminders feature ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jeff Holtzkener",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.24.0"
+  }
+}
